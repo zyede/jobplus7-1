@@ -25,5 +25,7 @@ class JobsZhipinSpider(scrapy.Spider):
             'financing': response.xpath('//div[@class="info-company"]/p/text()[1]').extract_first(),
             'num_of_people': response.xpath('//div[@class="info-company"]/p/text()[2]').extract_first(),
             'field': response.xpath('//div[@class="info-company"]/p/a/text()').extract_first(),
-            'pay': response.css('div.info-primary div.name span::text').extract_first()
+#            'pay': response.css('div.info-primary div.name span::text').extract_first()
+            'min_pay': int(response.css('div.info-primary div.name span::text').extract_first().split('-')[0].replace('K', '000')),
+            'max_pay': int(response.css('div.info-primary div.name span::text').extract_first().split('-')[1].replace('K', '000')),
         }

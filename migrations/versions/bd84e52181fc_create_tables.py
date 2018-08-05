@@ -1,8 +1,8 @@
-"""add state
+"""create tables
 
-Revision ID: 9f332be7deba
+Revision ID: bd84e52181fc
 Revises: 
-Create Date: 2018-07-28 01:02:13.056589
+Create Date: 2018-08-05 23:05:53.601643
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '9f332be7deba'
+revision = 'bd84e52181fc'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,6 +26,7 @@ def upgrade():
     sa.Column('email', sa.String(length=100), nullable=True),
     sa.Column('password', sa.String(length=100), nullable=True),
     sa.Column('role', sa.SmallInteger(), nullable=True),
+    sa.Column('state', sa.SmallInteger(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
     )
@@ -36,6 +37,7 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('name', sa.String(length=100), nullable=True),
     sa.Column('address', sa.String(length=100), nullable=True),
+    sa.Column('url', sa.String(length=64), nullable=True),
     sa.Column('phone', sa.String(length=11), nullable=True),
     sa.Column('logo', sa.String(length=255), nullable=True),
     sa.Column('summary', sa.Text(), nullable=True),
@@ -71,6 +73,7 @@ def upgrade():
     sa.Column('jobyear', sa.String(length=20), nullable=True),
     sa.Column('education', sa.String(length=20), nullable=True),
     sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('state', sa.SmallInteger(), nullable=True),
     sa.ForeignKeyConstraint(['company_id'], ['company.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -80,7 +83,9 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('personal_id', sa.Integer(), nullable=True),
     sa.Column('job_id', sa.Integer(), nullable=True),
+    sa.Column('company_id', sa.Integer(), nullable=True),
     sa.Column('state', sa.SmallInteger(), nullable=True),
+    sa.ForeignKeyConstraint(['company_id'], ['company.id'], ),
     sa.ForeignKeyConstraint(['job_id'], ['job.id'], ),
     sa.ForeignKeyConstraint(['personal_id'], ['personal.id'], ),
     sa.PrimaryKeyConstraint('id')

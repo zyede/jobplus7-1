@@ -1,3 +1,5 @@
+import os
+import json
 from faker import Faker
 from random import randint
 from jobplus.models import db, User, Personal, Company, Job, JobWanted
@@ -11,7 +13,7 @@ def Unicode():
 
 #生成user
 def iter_user():
-    for i in range(20):
+    for i in range(60):
         yield User(
                 name=str(f.random_int())+f.user_name(),
                 email=f.ascii_email(),
@@ -33,22 +35,39 @@ def iter_personal():
                     )
         elif user.role == 20:
 
-            name = Unicode()+f.company()
-            print(name)
-            yield Company(
-                    user_id=user.id,
-                    name=name,
-                    #name=Unicode()+f.company(),
-                    address=f.address(),
-                    url='https://www.baidu.com',
-                    phone=f.phone_number(),
-                    summary=f.sentence(),
-                    field=f.random_element(elements=('医药', '互联网', '金融')),
-                    financing=f.random_element(elements=('A轮','B轮','C轮','天使轮')),
+            with open(os.path.join(os.path.dirname(__file__), '..', 'datas', 'datas.json')) as e:
+                companys = json.load(e)
+                for company in companys:
+                    yield Company(
+                        user_id=user.id,
+                        name=company['company_name'],
+                        #name=Unicode()+f.company(),
+                        address=company['city'],
+                        url='https://www.baidu.com',
+                        phone=f.phone_number(),
+                        summary=f.sentence(),
+                        field=company['field'],
+                        financing=company['financing'],
+                        logo=company['company_image_url'],
                     )
 
 #职位信息
 def iter_job():
+    with open(os.path.join(os.path.dirname(__file__), '..', 'datas', 'datas.json')) as e:
+        jobs = json.load(e)
+        for job in jobs:
+            yield Job(
+                name=job['job_name'],
+                min_pay=job['min_pay'],
+                max_pay=job['max_pay'],
+                address=job['city'],
+                label=job['field'],
+                jobyear=job['jobyear'],
+                education=job['education'],
+                state=job['num_of_people'],
+            )
+
+'''
     for company in Company.query:
         for i in range(randint(0,10)):
             pay_int = f.random_int(0,100)*1000
@@ -63,6 +82,7 @@ def iter_job():
                     education=f.random_element(elements=('无限制','专科','本科','博士')),
                     state=f.random_element(elements=(1,2,3)),
                     )
+'''
 
 # 生成投递表
 def iter_jobwanted():
@@ -70,11 +90,11 @@ def iter_jobwanted():
         for job in Job.query:
             if randint(0,1) == 0:
                 yield JobWanted(
-                        job_id=job.id,
-                        personal_id=personal.id,
-                        company_id= job.company_id,
-                        state=f.random_element(elements=(1,2,3))
-                        )
+                    job_id=job.id,
+                    personal_id=personal.id,
+                    company_id= job.company_id,
+                    state=f.random_element(elements=(1,2,3))
+                )
 
 
 def run():
